@@ -1,4 +1,90 @@
 #!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+include /usr/share/dpkg/pkg-info.mk
+
+MAIN_PKG=node-debbundle-insert-module-globals
+SUBMODULES=node-dash-ast node-get-assigned-identifiers node-undeclared-identifiers
+SUBMODULES_GIT=node-dash-ast node-get-assigned-identifiers node-undeclared-identifiers
 
 %:
 	dh $@
+
+override_dh_fixperms:
+	dh_fixperms -O "--with nodejs"
+	chmod +x debian/$(MAIN_PKG)/usr/share/nodejs/insert-module-globals/bin/cmd.js
+	chmod +x debian/$(MAIN_PKG)/usr/share/nodejs/undeclared-identifiers/bin.js
+
+
+override_dh_install:
+	# work arround #940648
+	dh_install -O "--with nodejs"
+	find debian/$(MAIN_PKG)/usr/share/nodejs -name 'bench' -type d -exec rm -rf {} +
+
+ifeq (,$(filter nodoc,$(DEB_BUILD_OPTIONS) $(DEB_BUILD_PROFILES)))
+override_dh_installdocs:
+	dh_installdocs
+	mkdir -p debian/$(MAIN_PKG)/usr/share/doc/node-insert-module-globals
+	install readme.markdown $(CURDIR)/debian/$(MAIN_PKG)/usr/share/doc/node-insert-module-globals
+	cd  debian/$(MAIN_PKG)/usr/share/doc/$(MAIN_PKG) && for file in *; do \
+		ln -sf ../$(MAIN_PKG)/$$file $(CURDIR)/debian/$(MAIN_PKG)/usr/share/doc/node-insert-module-globals/$$file || exit 1; \
+	done
+	set -e;for module in $(SUBMODULES); do \
+		mkdir -p "debian/$(MAIN_PKG)/usr/share/doc/$$module"; \
+		ln -s ../$(MAIN_PKG)/copyright debian/$(MAIN_PKG)/usr/share/doc/$$module/copyright || exit 1; \
+	done
+	set -e;for module in $(SUBMODULES); do \
+		mkdir -p "debian/$(MAIN_PKG)/usr/share/doc/$$module"; \
+		find -L "$$module" -maxdepth 1 -iname '*.md' -and -not -iname 'license.md' -and -not -iname 'changelog.md' -exec install {} "debian/$(MAIN_PKG)/usr/share/doc/$$module" \; || exit 1;\
+	done
+	# back link
+	ln -sf ../node-insert-module-globals debian/$(MAIN_PKG)/usr/share/doc/$(MAIN_PKG)/node-insert-module-globals
+	set -e;for module in $(SUBMODULES); do \
+		ln -sf ../$$module debian/$(MAIN_PKG)/usr/share/doc/$(MAIN_PKG)/$$module ;\
+	done
+else
+override_dh_installdocs:
+	@echo '**********************************************************'
+	@echo 'Skip doc'
+	@echo '**********************************************************'
+endif
+
+ifeq (,$(filter nodoc,$(DEB_BUILD_OPTIONS) $(DEB_BUILD_PROFILES)))
+override_dh_installexamples:
+	dh_installexamples
+	mkdir -p debian/$(MAIN_PKG)/usr/share/doc/node-insert-module-globals/examples
+	cp -Rf example/* debian/$(MAIN_PKG)/usr/share/doc/node-insert-module-globals/examples
+else
+override_dh_installdocs:
+	@echo '**********************************************************'
+	@echo 'Skip example'
+	@echo '**********************************************************'
+endif
+
+override_dh_installchangelogs:
+	dh_installchangelogs -XCHANGELOG.md
+	mkdir -p debian/$(MAIN_PKG)/usr/share/doc/node-insert-module-globals
+	ln -sf ../$(MAIN_PKG)/changelog.Debian.gz debian/$(MAIN_PKG)/usr/share/doc/node-insert-module-globals/changelog.Debian.gz
+	set -e;for module in $(SUBMODULES); do \
+		mkdir -p "debian/$(MAIN_PKG)/usr/share/doc/$$module"; \
+		ln -s ../$(MAIN_PKG)/changelog.Debian.gz debian/$(MAIN_PKG)/usr/share/doc/$$module/changelog.Debian.gz; \
+	done
+ifeq (,$(filter nodoc,$(DEB_BUILD_OPTIONS) $(DEB_BUILD_PROFILES)))
+	mkdir -p debian/$(MAIN_PKG)/usr/share/doc/node-insert-module-globals
+	set -e;for module in $(SUBMODULES); do \
+		mkdir -p "debian/$(MAIN_PKG)/usr/share/doc/$$module"; \
+		find -L "$$module" -maxdepth 1 -iname 'changelog.md' -exec cp {} "debian/$(MAIN_PKG)/usr/share/doc/$$module/changelog" \; ;\
+	done
+else
+       # skip
+endif
+
+COMPONENTS_LIST_GIT_DPM=$(foreach component,$(SUBMODULES_GIT),--component ../$(MAIN_PKG)_$(DEB_VERSION_UPSTREAM).orig-$(component).tar.*)
+
+git_dpm_rules:
+	git dpm inu --ignore-unclean-branches --pristine-tar $(COMPONENTS_LIST_GIT_DPM) --rebase ../$(MAIN_PKG)_$(DEB_VERSION_UPSTREAM).orig.tar.*
+
+.PHONY=test_suites git_dpm_rules

@@ -1,0 +1,27 @@
+From 9e64d24f8bd95fb37cc4eb417c46ff808cd06de0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Bastien=20Roucari=C3=A8s?= <rouca@debian.org>
+Date: Wed, 18 Sep 2019 15:02:53 +0200
+Subject: Do not hardcode number of node of acorn
+
+Upstream of dash ast use a pinned version of acorn, compute dynamically the number of node instead.
+
+Forwarded: not-needed
+---
+ node-dash-ast/test/index.js | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+Index: node-insert-module-globals/node-dash-ast/test/index.js
+===================================================================
+--- node-insert-module-globals.orig/node-dash-ast/test/index.js
++++ node-insert-module-globals/node-dash-ast/test/index.js
+@@ -3,7 +3,9 @@ var src = require('fs').readFileSync(req
+ var parse = require('acorn').parse
+ var dash = require('../')
+ 
+-var NUM_NODES = 26358
++var NUM_NODES = 0
++var ast = parse(src)
++dash(ast, function (node) { NUM_NODES++ })
+ 
+ test('dash-ast', function (t) {
+   var ast = parse(src)
