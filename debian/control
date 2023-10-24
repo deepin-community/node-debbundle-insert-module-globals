@@ -1,15 +1,69 @@
-Source: template-repository
-Section: unknown
+Source: node-debbundle-insert-module-globals
+Maintainer: Debian Javascript Maintainers <pkg-javascript-devel@lists.alioth.debian.org>
+Uploaders: Bastien Roucariès <rouca@debian.org>
+Section: javascript
+Testsuite: autopkgtest-pkg-nodejs
 Priority: optional
-Maintainer: Tsic404 <liuheng@deepin.org>
-Build-Depends: debhelper (>= 11)
-Standards-Version: 4.1.3
-Homepage: https://github.com/deepin-community/template-repository
-#Vcs-Browser: https://salsa.debian.org/debian/deepin-community-template-repository
-#Vcs-Git: https://salsa.debian.org/debian/deepin-community-template-repository.git
+Build-Depends:
+ debhelper-compat (= 13)
+ , node-acorn <!nocheck>
+ , node-acorn-node <!nocheck>
+ , node-browser-pack <!nocheck>
+ , node-buffer <!nocheck>
+ , node-combine-source-map <!nocheck>
+ , node-concat-stream <!nocheck>
+ , node-convert-source-map <!nocheck>
+ , node-is-buffer <!nocheck>
+ , node-jsonstream <!nocheck>
+ , node-module-deps <!nocheck>
+ , node-path-is-absolute <!nocheck>
+ , node-process <!nocheck>
+ , node-tap <!nocheck>
+ , node-tape <!nocheck>
+ , node-through2 <!nocheck>
+ , node-timers-browserify <!nocheck>
+ , node-xtend <!nocheck>
+ , nodejs
+ , dh-sequence-nodejs
+Standards-Version: 4.6.1
+Vcs-Browser: https://salsa.debian.org/js-team/node-insert-module-globals
+Vcs-Git: https://salsa.debian.org/js-team/node-insert-module-globals.git
+Homepage: https://github.com/browserify/insert-module-globals
+Rules-Requires-Root: no
 
-Package: template-repository
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Package: node-debbundle-insert-module-globals
+Architecture: all
+Depends:
+ ${misc:Depends}
+ , node-acorn
+ , node-acorn-node
+ , node-combine-source-map
+ , node-concat-stream
+ , node-is-buffer
+ , node-jsonstream
+ , node-path-is-absolute
+ , node-process
+ , node-through2
+ , node-xtend
+ , nodejs
+Provides:
+ ${nodejs:Provides}
+ , node-insert-module-globals (=${source:Version})
+Description: browserify transform for inserting global list of modules
+ This package is part of the browserify tools, and allows one to
+ pack the list of module in a JavaScript file. This tools
+ analyses the syntax of the JavaScript file and replace the require
+ function by a closure, thus allowing direct embedding of the
+ required files.
+ .
+ This modules is part of Browserify a JavaScript tool that allows developers
+ to write Node.js-style modules that compile for use in the browser.
+ .
+ This package also includes a few small packages:
+  - node-dash-ast: a small and fast abstract tree (AST) walker.
+  - node-get-assigned-identifiers: get a list of initialised
+  javascript identifiers from an AST.
+  - node-undeclared-identifier: get a list of undeclared
+  identifiers.
+ .
+ Node.js is an event-based server-side JavaScript engine.

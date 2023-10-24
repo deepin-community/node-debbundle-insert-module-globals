@@ -1,0 +1,38 @@
+From: Bastien Roucariès <rouca@debian.org>
+Subject: Fix acorn warning
+
+Use newer API for acorn fixing a warning
+
+Forwarded: not-needed
+Index: node-insert-module-globals/node-dash-ast/test/index.js
+===================================================================
+--- node-insert-module-globals.orig/node-dash-ast/test/index.js
++++ node-insert-module-globals/node-dash-ast/test/index.js
+@@ -1,8 +1,10 @@
+ var test = require('tape')
+ var src = require('fs').readFileSync(require.resolve('acorn'))
+-var parse = require('acorn').parse
++var parse_acorn = require('acorn').parse
+ var dash = require('../')
+ 
++function parse(source) { return parse_acorn(source, {ecmaVersion: 2020}) }
++
+ var NUM_NODES = 0
+ var ast = parse(src)
+ dash(ast, function (node) { NUM_NODES++ })
+Index: node-insert-module-globals/node-get-assigned-identifiers/test/index.js
+===================================================================
+--- node-insert-module-globals.orig/node-get-assigned-identifiers/test/index.js
++++ node-insert-module-globals/node-get-assigned-identifiers/test/index.js
+@@ -1,8 +1,10 @@
+ var test = require('tape')
+ var assert = require('assert')
+-var parse = require('acorn').parse
++var parse_acorn = require('acorn').parse
+ var getAssignedIdentifiers = require('../')
+ 
++function parse(source) { return parse_acorn(source, {ecmaVersion: 2020 , sourceType : "module"}) }
++
+ function getName (node) {
+   assert.equal(node.type, 'Identifier', 'Returned node must be an Identifier')
+   return node.name

@@ -1,0 +1,27 @@
+.Dd 8/4/17
+.Dt browser-insert-module-global 1
+.Sh NAME
+.Nm browser-insert-module-global
+.Nd browserify tools to insert global module list
+.Sh SYNOPSIS
+.Nm
+.Op Ar file
+.Sh DESCRIPTION
+.Nm 
+pack node-style source files dependencies
+.Nm
+will input a javascript file and will output a transformed javascript file with 
+a closure around the contents as necessary to define extra builtins.
+.Nm
+will read by default STDIN.
+.Sh EXAMPLES
+.nf
+browser-module-deps /usr/share/doc/node-insert-module-globals/examples/main.js | browser-insert-module-globals | browser-pack | node
+in main.js: {"__filename":"/main.js","__dirname":"/"}
+in foo/index.js: {"__filename":"/foo/index.js","__dirname":"/foo"}
+.fi
+.Sh SEE ALSO
+.Xr browserify 1 , 
+.Xr browser-module-deps
+.Xr browser-pack 1 ,
+.Xr nodejs 1 ,

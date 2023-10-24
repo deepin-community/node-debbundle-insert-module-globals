@@ -1,0 +1,28 @@
+version=4
+opts=\
+dversionmangle=s/@DEB_EXT@//,\
+repacksuffix=+ds,\
+filenamemangle=s/.*\/v?(@ANY_VERSION@@ARCHIVE_EXT@)/node-debbundle-insert-module-globals-$1/ \
+ https://github.com/browserify/insert-module-globals/tags .*/archive/.*/v?@ANY_VERSION@@ARCHIVE_EXT@ group
+
+opts=\
+dversionmangle=auto,\
+ctype=nodejs,\
+component=node-dash-ast,\
+filenamemangle=s/.*\/v?(@ANY_VERSION@@ARCHIVE_EXT@)/node-dash-ast-$1/ \
+ https://github.com/goto-bus-stop/dash-ast/tags .*/archive/.*/v?@ANY_VERSION@@ARCHIVE_EXT@ checksum
+
+opts=\
+dversionmangle=auto,\
+ctype=nodejs,\
+component=node-get-assigned-identifiers,\
+filenamemangle=s/.*\/v?(@ANY_VERSION@@ARCHIVE_EXT@)/node-get-assigned-identifiers-$1/ \
+ https://github.com/goto-bus-stop/get-assigned-identifiers/tags .*/archive/.*/v?@ANY_VERSION@@ARCHIVE_EXT@ checksum
+
+opts=\
+dversionmangle=auto,\
+ctype=nodejs,\
+component=node-undeclared-identifiers,\
+filenamemangle=s/.*\/v?(@ANY_VERSION@@ARCHIVE_EXT@)/node-undeclared-identifiers-$1/ \
+ https://github.com/goto-bus-stop/undeclared-identifiers/tags .*/archive/.*/v?@ANY_VERSION@@ARCHIVE_EXT@ checksum
+
